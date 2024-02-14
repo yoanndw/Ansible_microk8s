@@ -1,0 +1,29 @@
+---
+
+- name: install ca-certificates and curl
+  apt:
+    update_cache: true
+    name:
+      - ca-certificates
+      - curl
+
+- name: install docker keys
+  shell: install -m 0755 -d /etc/apt/keyrings && curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+
+- name: change docker keyring perms
+  file:
+    mode: "a+r"
+    path: /etc/apt/keyrings/docker.asc
+
+- name: add repository to apt sources
+  shell: 'echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null'
+
+- name: install docker packages
+  apt:
+    update_cache: true
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin

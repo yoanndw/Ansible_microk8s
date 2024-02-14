@@ -1,0 +1,30 @@
+---
+
+- name: install microk8s
+  snap:
+    name: microk8s
+    classic: true
+    channel: "1.25"
+  become: true
+
+- name: create microk8s user
+  user:
+    append: true
+    name: "{{ ansible_ssh_user }}"
+    groups: microk8s
+  become: true
+
+# - name: update microk8s user
+#   shell: su - {{ ansible_ssh_user }}
+
+- name: change kube directory's owner
+  file:
+    owner: "{{ ansible_ssh_user }}"
+    path: ~/.kube
+    recurse: true
+
+- name: start microk8s
+  shell: microk8s start && microk8s status --wait-ready
+
+- name: enable microk8s services
+  shell: microk8s enable dns storage && microk8s enable dashboard ingress && microk8s enable registry

@@ -1,0 +1,9 @@
+---
+
+- name: install docker and microk8s
+  hosts: all
+  remote_user: zprojet
+  become: yes
+
+  roles:
+    - common
